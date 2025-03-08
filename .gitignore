@@ -1,0 +1,4 @@
+/.venv
+/deposits.db
+/__pycache__
+*.pyc
