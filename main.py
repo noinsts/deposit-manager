@@ -3,6 +3,7 @@ from windows.add_window import AddWindow
 from windows.update_window import UpdateWindow
 from windows.remove_window import RemoveWindow
 from windows.calculate_window import CalculateWindow
+from windows.list_window import ListWindow
 import database as db
 
 
@@ -16,6 +17,7 @@ class MainApp(tk.Tk):
         tk.Button(self, text='Оновити депозит', command=self.open_update_deposit).pack(fill="x")
         tk.Button(self, text='Видалити депозит', command=self.open_remove_window).pack(fill="x")
         tk.Button(self, text='Розрахувати депозит', command=self.open_calculate_window).pack(fill="x")
+        tk.Button(self, text='Список депозитів', command=self.open_list_window).pack(fill="x")
 
     def open_add_deposit(self):
         AddWindow(self)
@@ -29,6 +31,8 @@ class MainApp(tk.Tk):
     def open_calculate_window(self):
         CalculateWindow(self)
 
+    def open_list_window(self):
+        ListWindow(self)
 
 
 if __name__ == "__main__":

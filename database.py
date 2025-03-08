@@ -44,3 +44,9 @@ def add_deposit(name, bank_name, interest_3_6, interest_6_9, interest_9_12, inte
               interest_18_early, interest_24_early))
         conn.commit()
 
+def get_deposits():
+    with sqlite3.connect(DB_NAME) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM deposits")
+        deposits = cursor.fetchall()
+    return deposits
