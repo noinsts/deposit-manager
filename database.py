@@ -2,6 +2,7 @@ import sqlite3
 
 DB_NAME = "deposits.db"
 
+
 def init_db():
     """Створює базу, якщо її нема"""
     with sqlite3.connect(DB_NAME) as conn:
@@ -26,6 +27,7 @@ def init_db():
         """)
         conn.commit()
 
+
 def add_deposit(name, bank_name, interest_3_6, interest_6_9, interest_9_12, interest_18, interest_24,
                 early_withdrawal, interest_3_6_early, interest_6_9_early, interest_9_12_early,
                 interest_18_early, interest_24_early):
@@ -44,12 +46,14 @@ def add_deposit(name, bank_name, interest_3_6, interest_6_9, interest_9_12, inte
               interest_18_early, interest_24_early))
         conn.commit()
 
+
 def get_deposits():
     with sqlite3.connect(DB_NAME) as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM deposits")
         deposits = cursor.fetchall()
     return deposits
+
 
 def remove_deposite(name, bank_name):
     with sqlite3.connect(DB_NAME) as conn:
