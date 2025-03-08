@@ -50,3 +50,10 @@ def get_deposits():
         cursor.execute("SELECT * FROM deposits")
         deposits = cursor.fetchall()
     return deposits
+
+def remove_deposite(name, bank_name):
+    with sqlite3.connect(DB_NAME) as conn:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM deposits WHERE name = ? AND bank_name = ?", (name, bank_name))
+        conn.commit()
+    return cursor.rowcount
