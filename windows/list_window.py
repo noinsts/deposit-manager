@@ -1,8 +1,12 @@
-import tkinter as tk
+import customtkinter as ctk
+from tkinter import ttk
 
 from database import get_deposits
 
-class ListWindow(tk.Toplevel):
+ctk.set_appearance_mode("Dark")
+ctk.set_default_color_theme("dark-blue")
+
+class ListWindow(ctk.CTkToplevel):
     def __init__(self, parent):
         super().__init__(parent)
 
@@ -11,14 +15,17 @@ class ListWindow(tk.Toplevel):
 
         self.deposits = get_deposits()
 
-        # Створюємо заголовки колонок
+        # Створюємо таблицю за допомогою ttk.Treeview
+        self.tree = ttk.Treeview(self, columns=("ID", "Назва", "Банк", "3-6 міс.", "6-9 міс.", "9-12 міс.", "18 міс.", "24 міс."), show="headings")
+
+        # Налаштовуємо заголовки колонок
         headers = ["ID", "Назва", "Банк", "3-6 міс.", "6-9 міс.", "9-12 міс.", "18 міс.", "24 міс."]
         for col, header in enumerate(headers):
-            label = tk.Label(self, text=header, font=("Bitstream Charter", 10), relief="solid", width=20)
-            label.grid(row=0, column=col, padx=5, pady=5)
+            self.tree.heading(col, text=header)
+            self.tree.column(col, width=150)  # Встановлюємо ширину колонок
 
-        # Виводимо депозити в таблицю
-        for row, deposit in enumerate(self.deposits, start=1):
-            for col, value in enumerate(deposit):
-                label = tk.Label(self, text=value, font=("Bitstream Charter", 10), relief="solid", width=20)
-                label.grid(row=row, column=col, padx=5, pady=5)
+        # Вставляємо дані в таблицю
+        for deposit in self.deposits:
+            self.tree.insert("", "end", values=deposit)
+
+        self.tree.pack(padx=10, pady=10, fill="both", expand=True)

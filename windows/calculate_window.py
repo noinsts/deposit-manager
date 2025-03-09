@@ -1,48 +1,53 @@
-import tkinter as tk
-from tkinter import messagebox
+import customtkinter as ctk
+from CTkMessagebox import CTkMessagebox
 
 import database as db
 
+ctk.set_appearance_mode("Dark")
+ctk.set_default_color_theme("dark-blue")
 
-class CalculateWindow(tk.Toplevel):
+class CalculateWindow(ctk.CTkToplevel):
     def __init__(self, parent):
         super().__init__(parent)
         self.title('Розрахувати депозит')
 
-        tk.Label(self, text='Підбір депозитів', font=('Bitstream Charter', 14)).pack(pady=10)
+        frame = ctk.CTkFrame(self)
+        frame.pack(padx=20, pady=20, fill="both", expand=True)
+
+        ctk.CTkLabel(frame, text='Підбір депозитів', font=('Arial', 18, 'bold')).pack(pady=10)
 
         self.entries = {}
         labels = {
-            "bank_name" : "Ваш банк",
-            "term" : "Термін депозиту (к-сть місяців)",
-            "money" : "Введіть суму"
+            "bank_name": "Ваш банк",
+            "term": "Термін депозиту (к-сть місяців)",
+            "money": "Введіть суму"
         }
 
         for key, label_text in labels.items():
-            tk.Label(self, text=label_text).pack()
-            entry = tk.Entry(self)
-            entry.pack()
+            ctk.CTkLabel(frame, text=label_text, font=('Arial', 12)).pack(pady=5)
+            entry = ctk.CTkEntry(frame)
+            entry.pack(pady=5)
             self.entries[key] = entry
 
-        tk.Button(self, text='Розрахувати', command=self.calculate, bg='red', fg='white').pack(pady=10)
-
+        ctk.CTkButton(frame, text='Розрахувати', command=self.calculate, bg_color='#4A5568', fg_color='#4A5568', hover_color='#2D3748', text_color='white').pack(pady=10)
 
     def percent(self):
         bank_name = self.entries["bank_name"].get()
-        term = int(self.entries["term"].get())
+        term = self.entries["term"].get()
 
         if not bank_name:
-            messagebox.showwarning(title='Помилка!', message='Введіть назву банку')
-            return
+            CTkMessagebox(title='Помилка!', message='Введіть назву банку', icon="warning")
+            return None
 
         if not term:
-            messagebox.showwarning(title='Помилка', message='Введіть термін')
+            CTkMessagebox(title='Помилка', message='Введіть термін', icon="warning")
+            return None
 
         try:
             term = int(term)
         except ValueError:
-            messagebox.showwarning(title='Помилка!', message='Термін має бути число')
-            return
+            CTkMessagebox(title='Помилка!', message='Термін має бути число', icon="warning")
+            return None
 
         if 3 <= term < 6:
             interest_column = "interest_3_6"
@@ -50,18 +55,18 @@ class CalculateWindow(tk.Toplevel):
             interest_column = "interest_6_9"
         elif 9 <= term <= 12:
             interest_column = "interest_9_12"
-        elif 13 <= term < 18:
+        elif 13 <= term <= 18:
             interest_column = "interest_18"
-        elif 19 <= term < 24:
+        elif 19 <= term <= 24:
             interest_column = "interest_24"
         else:
-            messagebox.showerror("Помилка", "Невірний термін депозиту")
-            return
+            CTkMessagebox(title="Помилка", message="Невірний термін депозиту", icon="cancel")
+            return None
 
         try:
             results = db.percent(bank_name, interest_column)
         except Exception as e:
-            messagebox.showerror("Помилка", f"Помилка бази даних: {e}")
+            CTkMessagebox(title="Помилка", message=f"Помилка бази даних: {e}", icon="cancel")
             return None
 
         if results:
@@ -75,28 +80,27 @@ class CalculateWindow(tk.Toplevel):
                 })
             return deposit_data
         else:
-            messagebox.showerror("Помилка", f"Не вдалося знайти депозити в банку '{bank_name}' з терміном '{term}' місяців")
+            CTkMessagebox(title=f"Помилка", message=f"Не вдалося знайти депозити в банку '{bank_name}' з терміном '{term}' місяців", icon="cancel")
             return None
-
 
     def calculate(self):
         money = self.entries["money"].get()
 
         if not money:
-            messagebox.showwarning(title='Помилка!', message='Введіть кількість грошей')
+            CTkMessagebox(title='Помилка!', message='Введіть кількість грошей', icon="warning")
             return
 
         try:
             money = int(money)
         except ValueError:
-            messagebox.showwarning(title='Помилка!', message='Введіть гроші числом')
+            CTkMessagebox(title='Помилка!', message='Введіть гроші числом', icon="warning")
             return
 
         deposits_data = self.percent()
 
         if deposits_data:
             message = ""
-            for deposit_data in deposits_data:  # Ітеруємо по списку депозитів
+            for deposit_data in deposits_data:
                 interest_rate = deposit_data["interest_rate"]
                 deposit_name = deposit_data["deposit_name"]
                 bank_name = deposit_data["bank_name"]
@@ -108,9 +112,7 @@ class CalculateWindow(tk.Toplevel):
                     f"Відсоткова ставка: {interest_rate}%\n"
                     f"Сума вкладу: {money} грн.\n"
                     f"Прибуток: {profit:.2f} грн.\n\n"
-            )
-            messagebox.showinfo(title='Знайдено депозит!', message=message)
+                )
+            CTkMessagebox(title='Знайдено депозит!', message=message, icon="check")
         else:
-            messagebox.showerror("Помилка", "Не вдалося розрахувати депозит")
-
-
+            CTkMessagebox(title="Помилка", message="Не вдалося розрахувати депозит", icon="cancel")
