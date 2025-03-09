@@ -90,3 +90,11 @@ def update_deposit(name, bank_name, updated_data):
                 interest_18 = ?, interest_24 = ? WHERE name = ? AND bank_name = ?
         """, (*updated_data.values(), name, bank_name))
         conn.commit()
+
+
+def percent(bank_name, interest_column):
+    with sqlite3.connect(DB_NAME) as conn:
+        cursor = conn.cursor()
+        cursor.execute(f"SELECT {interest_column}, name FROM deposits WHERE bank_name = ?", (bank_name, ))
+        result = cursor.fetchall()
+    return result

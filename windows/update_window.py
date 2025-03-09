@@ -73,14 +73,12 @@ class EditWindow(tk.Toplevel):
 
         tk.Button(self, text="Зберегти зміни", command=self.save_changes, bg='blue', fg='white').pack(pady=10)
 
+
     def save_changes(self):
         updated_data = {term: entry.get() for term, entry in self.entries.items()}
 
         # Ігноруємо порожні значення
         filtered_data = {key: value for key, value in updated_data.items() if value}
-
-        # Ігноруємо early_withdrawal
-        filtered_data.pop("early_withdrawal", None)
 
         db.update_deposit(self.name, self.bank_name, filtered_data)
         messagebox.showinfo("Успіх!", "Оновлення відбулося!")
