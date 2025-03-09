@@ -16,34 +16,21 @@ def init_db():
                 interest_6_9 REAL NOT NULL,
                 interest_9_12 REAL NOT NULL,
                 interest_18 REAL NOT NULL,
-                interest_24 REAL NOT NULL,
-                early_withdrawal INTEGER NOT NULL,
-                interest_3_6_early REAL,
-                interest_6_9_early REAL,
-                interest_9_12_early REAL,
-                interest_18_early REAL,
-                interest_24_early REAL
+                interest_24 REAL NOT NULL
             )
         """)
         conn.commit()
 
 
-def add_deposit(name, bank_name, interest_3_6, interest_6_9, interest_9_12, interest_18, interest_24,
-                early_withdrawal, interest_3_6_early, interest_6_9_early, interest_9_12_early,
-                interest_18_early, interest_24_early):
+def add_deposit(name, bank_name, interest_3_6, interest_6_9, interest_9_12, interest_18, interest_24,):
     """Додає депозит до бази даних"""
     with sqlite3.connect(DB_NAME) as conn:
         cursor = conn.cursor()
         cursor.execute("""
             INSERT INTO deposits (
-                name, bank_name, interest_3_6, interest_6_9, interest_9_12, interest_18, interest_24, 
-                early_withdrawal, interest_3_6_early, interest_6_9_early, interest_9_12_early, 
-                interest_18_early, interest_24_early
-            ) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (name, bank_name, interest_3_6, interest_6_9, interest_9_12, interest_18, interest_24,
-              early_withdrawal, interest_3_6_early, interest_6_9_early, interest_9_12_early,
-              interest_18_early, interest_24_early))
+                name, bank_name, interest_3_6, interest_6_9, interest_9_12, interest_18, interest_24) 
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (name, bank_name, interest_3_6, interest_6_9, interest_9_12, interest_18, interest_24,))
         conn.commit()
 
 
@@ -61,3 +48,45 @@ def remove_deposite(name, bank_name):
         cursor.execute("DELETE FROM deposits WHERE name = ? AND bank_name = ?", (name, bank_name))
         conn.commit()
     return cursor.rowcount
+
+
+def names_deposit():
+    with sqlite3.connect(DB_NAME) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT name FROM deposits")
+        names = cursor.fetchall()
+    return names
+
+
+def bank_name_deposit():
+    with sqlite3.connect(DB_NAME) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT bank_name FROM deposits")
+        bank_names = cursor.fetchall()
+    return bank_names
+
+
+def get_need_depo(name, bank_name):
+    with sqlite3.connect(DB_NAME) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT interest_3_6, interest_6_9, interest_9_12, "
+                       "interest_18, interest_24 FROM deposits WHERE name = ? and bank_name = ?", (name, bank_name))
+        row = cursor.fetchone()
+
+    if row:
+        keys = ["interest_3_6", "interest_6_9", "interest_9_12", "interest_18", "interest_24"]
+        return dict(zip(keys, row))
+
+    return None
+
+
+def update_deposit(name, bank_name, updated_data):
+    """Оновлює депозит у базі"""
+    with sqlite3.connect(DB_NAME) as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            UPDATE deposits 
+            SET interest_3_6 = ?, interest_6_9 = ?, interest_9_12 = ?, 
+                interest_18 = ?, interest_24 = ? WHERE name = ? AND bank_name = ?
+        """, (*updated_data.values(), name, bank_name))
+        conn.commit()
