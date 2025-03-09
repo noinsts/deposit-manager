@@ -13,6 +13,12 @@ class UpdateWindow(tk.Toplevel):
         deposit_names = [name[0] for name in db.names_deposit()]
         deposit_bank_names = [bank_name[0] for bank_name in db.bank_name_deposit()]
 
+
+        if not deposit_names or not deposit_bank_names:
+            messagebox.showerror("Помилка", "Немає доступних депозитів для оновлення.")
+            self.destroy()  # Закриваємо вікно, якщо депозитів немає
+            return
+
         # Назва депозиту
         tk.Label(self, text='Оберіть назву депозиту', font=('Bitstream Charter', 10)).pack(pady=5)
         self.name = ttk.Combobox(self, values=deposit_names, state="readonly")

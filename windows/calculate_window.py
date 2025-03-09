@@ -58,7 +58,11 @@ class CalculateWindow(tk.Toplevel):
             messagebox.showerror("Помилка", "Невірний термін депозиту")
             return
 
-        results = db.percent(bank_name, interest_column)
+        try:
+            results = db.percent(bank_name, interest_column)
+        except Exception as e:
+            messagebox.showerror("Помилка", f"Помилка бази даних: {e}")
+            return None
 
         if results:
             deposit_data = []
@@ -71,7 +75,7 @@ class CalculateWindow(tk.Toplevel):
                 })
             return deposit_data
         else:
-            messagebox.showerror("Помилка", "Не вдалося знайти депозити з такими даними")
+            messagebox.showerror("Помилка", f"Не вдалося знайти депозити в банку '{bank_name}' з терміном '{term}' місяців")
             return None
 
 

@@ -13,26 +13,17 @@ class MainApp(tk.Tk):
         self.title("Калькулятор депозитів")
 
         tk.Label(self, text='Головне меню', font=('Arial', 16)).pack(pady=10)
-        tk.Button(self, text='Додати депозит', command=self.open_add_deposit).pack(fill="x")
-        tk.Button(self, text='Оновити депозит', command=self.open_update_deposit).pack(fill="x")
-        tk.Button(self, text='Видалити депозит', command=self.open_remove_window).pack(fill="x")
-        tk.Button(self, text='Розрахувати депозит', command=self.open_calculate_window).pack(fill="x")
-        tk.Button(self, text='Список депозитів', command=self.open_list_window).pack(fill="x")
 
-    def open_add_deposit(self):
-        AddWindow(self)
+        buttons = {
+            'Додати депозит': AddWindow,
+            'Оновити депозит': UpdateWindow,
+            'Видалити депозит': RemoveWindow,
+            'Розрахувати депозит': CalculateWindow,
+            'Список депозитів': ListWindow,
+        }
 
-    def open_update_deposit(self):
-        UpdateWindow(self)
-
-    def open_remove_window(self):
-        RemoveWindow(self)
-
-    def open_calculate_window(self):
-        CalculateWindow(self)
-
-    def open_list_window(self):
-        ListWindow(self)
+        for text, window_class in buttons.items():
+            tk.Button(self, text=text, command=lambda cls=window_class: cls(self)).pack(fill="x")
 
 
 if __name__ == "__main__":

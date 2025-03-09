@@ -10,23 +10,28 @@ class RemoveWindow(tk.Toplevel):
 
         tk.Label(self, text='Видалити депозит', font=('Bitstream Charter', 16)).pack(pady=10)
 
-        # Назва депозиту
-        tk.Label(self, text='Введіть назву депозиту', font=('Bitstream Charter', 10)).pack(pady=10)
-        self.name = tk.Entry(self)
-        self.name.pack()
+        labels = {
+            'Введіть назву депозиту': tk.Entry(self),
+            'Введіть назву банку' : tk.Entry(self)
+        }
 
-        # Назва банку
-        tk.Label(self, text='Введіть назву банку', font=('Bitstream Charter', 10)).pack(pady=10)
-        self.bank_name = tk.Entry(self)
-        self.bank_name.pack()
+        self.entries = labels
+
+        for text, entry in labels.items():
+            tk.Label(self, text=text, font=('Bitstream Charter', 10))
+            entry.pack()
 
         # Delete
         tk.Button(self, text='Delete', command=self.commit, bg='red', fg='white').pack(pady=10)
 
 
     def commit(self):
-        name = self.name.get()
-        bank_name = self.bank_name.get()
+        name = self.entries["Введіть назву депозиту"].get()
+        bank_name = self.entries["Введіть назву банку"].get()
+
+        if not name or not bank_name:
+            messagebox.showerror(title='Помилка!', message='Введіть назву депозиту та банку')
+            return
 
         deleted_rows = db.remove_deposite(name, bank_name)
 
