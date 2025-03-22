@@ -1,6 +1,6 @@
 import tkinter as tk
 
-from database import get_deposits
+from src.database import get_deposits
 
 class ListWindow(tk.Toplevel):
     def __init__(self, parent):

@@ -1,9 +1,9 @@
 import tkinter as tk
-from windows.add_window import AddWindow
-from windows.update_window import UpdateWindow
-from windows.remove_window import RemoveWindow
-from windows.calculate_window import CalculateWindow
-from windows.list_window import ListWindow
+from src.windows.add_window import AddWindow
+from src.windows.update_window import UpdateWindow
+from src.windows.remove_window import RemoveWindow
+from src.windows.calculate_window import CalculateWindow
+from src.windows.list_window import ListWindow
 import database as db
 
 

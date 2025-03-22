@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-import database as db
+from src import database as db
 
 
 class UpdateWindow(tk.Toplevel):

@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 
-import database as db
+from src import database as db
 
 
 class CalculateWindow(tk.Toplevel):
