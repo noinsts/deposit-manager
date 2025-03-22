@@ -11,10 +11,8 @@ class UpdateWindow(tk.Toplevel):
         tk.Label(self, text='Обновити депозит', font=('Bitstream Charter', 16)).pack(pady=10)
 
         deposit_names = [name[0] for name in db.names_deposit()]
-        deposit_bank_names = [bank_name[0] for bank_name in db.bank_name_deposit()]
 
-
-        if not deposit_names or not deposit_bank_names:
+        if not deposit_names:
             messagebox.showerror("Помилка", "Немає доступних депозитів для оновлення.")
             self.destroy()  # Закриваємо вікно, якщо депозитів немає
             return
@@ -23,14 +21,26 @@ class UpdateWindow(tk.Toplevel):
         tk.Label(self, text='Оберіть назву депозиту', font=('Bitstream Charter', 10)).pack(pady=5)
         self.name = ttk.Combobox(self, values=deposit_names, state="readonly")
         self.name.pack()
+        self.name.bind("<<ComboboxSelected>>", self.update_banks)
 
         # Назва банку депозиту
         tk.Label(self, text='Оберіть назву банку', font=('Bitstream Charter', 10)).pack(pady=5)
-        self.bank_name = ttk.Combobox(self, values=deposit_bank_names, state="readonly")
+        self.bank_name = ttk.Combobox(self, state="readonly")
         self.bank_name.pack()
 
         # Кнопка для підтвердження вибору
         tk.Button(self, text="Обрати", command=self.select, bg='green', fg='white').pack(pady=5)
+
+    def update_banks(self, event=None):
+        selected_deposit = self.name.get()
+        if selected_deposit:
+            # Отримати список банків для обраного депозиту
+            deposit_bank_names = [bank_name[0] for bank_name in db.bank_name_deposit(selected_deposit)]
+            self.bank_name['values'] = deposit_bank_names
+            if deposit_bank_names:
+                self.bank_name.current(0)  # Встановлюємо перший банк як вибраний за замовчуванням
+            else:
+                self.bank_name.set('')  # Очищаємо вибір, якщо немає банків
 
     def select(self):
         name = self.name.get()

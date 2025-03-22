@@ -58,10 +58,10 @@ def names_deposit():
     return names
 
 
-def bank_name_deposit():
+def bank_name_deposit(name):
     with sqlite3.connect(DB_NAME) as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT bank_name FROM deposits")
+        cursor.execute("SELECT bank_name FROM deposits WHERE name = ?", (name, ))
         bank_names = cursor.fetchall()
     return bank_names
 
